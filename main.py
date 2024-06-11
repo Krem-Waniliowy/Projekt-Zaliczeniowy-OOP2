@@ -3,10 +3,10 @@ from tile import Tile
 from button import Button
 from field import Field
 
-# Inicjalizacja Pygame
+# inicjalizacja Pygame
 pygame.init()
 
-# Ustawienia gry
+# ustawienia gry
 ROWS, COLS = 10, 10
 FIELD_SIZE = 40
 FIELD_BORDER_SIZE = 2
@@ -17,13 +17,13 @@ P_START_Y = 50 # początek y planczy gracza
 screen = pygame.display.set_mode((800, 800))
 pygame.display.set_caption("Test")
 
-# # Tworzenie obiektu Tile
+# # tworzenie obiektu Tile
 # tile = Tile(normal_color=(0, 128, 255), hover_color=(255, 0, 0), w=100, h=100, cx=200, cy=400)
 #
-# # Tworzenie obiektu Button
+# # tworzenie obiektu Button
 # button = Button(normal_color=(0, 128, 255), hover_color=(255, 0, 0), w=100, h=100, cx=400, cy=400, text='Click Me', text_color=(255, 255, 255), font_size=30, font_type='Arial')
 
-# Tworzenie planszy z pól
+# tworzenie planszy z pól
 fields = []
 for row in range(ROWS):
     fields_row = []
@@ -34,24 +34,25 @@ for row in range(ROWS):
         fields_row.append(field)
     fields.append(fields_row)
 
-# Główna pętla gry
+# główna pętla gry
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    # Pobranie pozycji myszy
+    # pobranie pozycji myszy
     mouse_pos = pygame.mouse.get_pos()
     mouse_button_down = pygame.mouse.get_pressed()[0]
     print(mouse_pos)
 
-    # Sprawdzenie najechania myszką
+    screen.fill((255, 255, 255))
+    
+    # sprawdzenie najechania myszką
     # tile.check_hover(mouse_pos) # kafelek
     # button.check_hover(mouse_pos) # przycisk
 
-    # Rysowanie kafelka
-    screen.fill((255, 255, 255))
+    # rysowanie kafelka
     # tile.draw(screen)
     # button.draw(screen)
     for row in fields:
