@@ -11,7 +11,6 @@ class Field(Tile):
 
     def draw(self, screen):
         super().draw(screen)
-        # Rysuj dodatkowe informacje, np. trafienie
         if self.hit:
             pygame.draw.line(screen, (255, 0, 0), self.rect.topleft, self.rect.bottomright, 5)
             pygame.draw.line(screen, (255, 0, 0), self.rect.topright, self.rect.bottomleft, 5)
