@@ -2,26 +2,16 @@ import pygame
 from tile import Tile
 
 class Field(Tile):
-    def __init__(self, border_color, border_width, normal_color, hover_color, w, h, cx, cy):
-        super().__init__(border_color, border_width, normal_color, hover_color, w, h, cx, cy)
+    def __init__(self, border_color, border_size, normal_color, hover_color, w, h, cx, cy):
+        super().__init__(normal_color, hover_color, w, h, cx, cy, border_color, border_size)
         self.occupied = False
         self.hit = False
         self.miss = False
-        
 
     def draw(self, screen):
-        super().draw(screen)
+        self.current_color = self.hover_color if self.rect.collidepoint(pygame.mouse.get_pos()) else self.normal_color
         if self.hit:
-            pygame.draw.line(screen, (255, 0, 0), self.rect.topleft, self.rect.bottomright, 5)
-            pygame.draw.line(screen, (255, 0, 0), self.rect.topright, self.rect.bottomleft, 5)
+            self.current_color = (255, 0, 0)
         elif self.miss:
-            pygame.draw.circle(screen, (0, 0, 255), self.rect.center, self.width // 4, 5)
-
-    def check_click(self, mouse_pos, mouse_button_down):
-        if self.rect.collidepoint(mouse_pos) and mouse_button_down:
-            if self.occupied:
-                self.hit = True
-            else:
-                self.miss = True
-            return True
-        return False
+            self.current_color = (255, 255, 255)
+        super().draw(screen)
