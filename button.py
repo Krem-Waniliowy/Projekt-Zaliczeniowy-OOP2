@@ -9,8 +9,9 @@ class Button(Tile):
         self.font = pygame.font.SysFont(font_type, font_size)
 
     def draw(self, screen):
+        # rysowanie kafelka z klasy bazowej
         super().draw(screen)
-        pygame.draw.rect(screen, (0, 0, 0), self.rect, 2)
+        # rysowanie tekstu na kafelku
         text_surf = self.font.render(self.text, True, self.text_color)
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)
