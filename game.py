@@ -84,10 +84,8 @@ class Game:
             else:
                 self.selected_ship_direction = 'H'
                 self.orientation_button.text = 'Horizontal'
-
-        # NIEPOTRZEBNY WARUNEK
-        # if not mouse_button_down:
-        #     self.orientation_button_pressed = False
+        if not mouse_button_down:
+            self.orientation_button_pressed = False
 
         # przebieg stawiania statku
         for row in range(self.rows):
