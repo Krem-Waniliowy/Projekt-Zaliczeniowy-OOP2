@@ -9,7 +9,7 @@ class Game:
     def __init__(self, screen):
         # USTAWIENIA GRY
         self.menu_size = (800, 600)
-        self.game_size = (1000, 800)
+        self.game_size = (1000, 500)
         self.end_size = (800, 600)
         self.screen = screen
         self.clock = pygame.time.Clock()
