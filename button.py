@@ -3,8 +3,8 @@ from tile import Tile
 
 
 class Button(Tile):
-    def __init__(self, normal_color, hover_color, w, h, cx, cy, text, text_color, font_size, font_type):
-        super().__init__(normal_color, hover_color, w, h, cx, cy)
+    def __init__(self, normal_color, hover_color, w, h, cx, cy, text, text_color, font_size, font_type, border_color=(0, 0, 0), border_width=2):
+        super().__init__(normal_color, hover_color, w, h, cx, cy, border_color, border_width)
         self.text = text
         self.text_color = text_color
         self.font = pygame.font.SysFont(font_type, font_size)

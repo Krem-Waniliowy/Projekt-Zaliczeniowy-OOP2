@@ -3,7 +3,7 @@ from tile import Tile
 
 
 class Field(Tile):
-    def __init__(self, normal_color, hover_color, w, h, cx, cy, border_color, border_width):
+    def __init__(self, normal_color, hover_color, w, h, cx, cy, border_color=(0, 0, 0), border_width=2):
         super().__init__(normal_color, hover_color, w, h, cx, cy, border_color, border_width)
         self.occupied = False
         self.hit = False
