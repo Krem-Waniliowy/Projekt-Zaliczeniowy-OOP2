@@ -33,20 +33,25 @@ class Game:
 
         # PRZYCISKI
         self.buttons = self.create_buttons()
-        self.orientation_button = Button((0, 128, 255), (255, 0, 0), 150, 50, 600, 425,'Horizontal', (255, 255, 255), 20, 'Arial')
+        self.orientation_button = Button((0, 128, 255), (255, 0, 0), 150, 50, 725, 425,
+                                         (0, 0, 0), 2, 'Horizontal', (255, 255, 255), 20, 'Arial')
         self.menu_screen_buttons = [
-            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 250, 'Start', (255, 255, 255), 30, 'Arial'),
-            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 350, 'Exit', (255, 255, 255), 30, 'Arial')
+            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 250, (0, 0, 0),
+                   2, 'Start', (255, 255, 255), 30,'Arial'),
+            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 350, (0, 0, 0),
+                   2, 'Exit', (255, 255, 255), 30,'Arial'),
         ]
         self.end_screen_buttons = [
-            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 250, 'Restart', (255, 255, 255), 30, 'Arial'),
-            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 350, 'Exit', (255, 255, 255), 30, 'Arial')
+            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 250, (0, 0, 0),
+                   2, 'Restart', (255, 255, 255), 30,'Arial'),
+            Button((0, 128, 255), (255, 0, 0), 200, 50, 400, 350, (0, 0, 0),
+                   2, 'Exit', (255, 255, 255), 30,'Arial'),
         ]
 
         # ZMIENNE GRY
         self.selected_ship = None
         self.selected_ship_size = 0
-        self.selected_ship_direction = 'H'
+        self.selected_ship_orientation = 'H'
         self.player_ships = []
         self.computer_ships = []
         self.game_state = "MENU"
@@ -61,11 +66,12 @@ class Game:
 
     def create_buttons(self):
         buttons = []
-        x = 600
+        x = 725
         y = 75
         gap = 60
         for ship in self.ships.keys():
-            button = Button((0, 128, 255), (255, 0, 0), 150, 50, x, y, ship, (255, 255, 255), 20, 'Arial')
+            button = Button((0, 128, 255), (255, 0, 0), 150, 50, x, y, (0, 0, 0),
+                            2, ship,(255, 255, 255),20, 'Arial')
             buttons.append(button)
             y += gap
         return buttons
@@ -90,17 +96,21 @@ class Game:
         for button in self.buttons:
             button.check_hover(mouse_pos)
             if button.check_click(mouse_pos, mouse_button_down) and self.mouse_button_released:
-                self.selected_ship = button.text
-                self.selected_ship_size = self.ships[self.selected_ship]
+                # wybieraj statek tylko jeśli nie został już postawiony
+                if button.text not in self.placed_ships:
+                    self.selected_ship = button.text
+                    self.selected_ship_size = self.ships[self.selected_ship]
 
         # kliknięcie na wybór orientacji
         self.orientation_button.check_hover(mouse_pos)
         if self.orientation_button.check_click(mouse_pos, mouse_button_down) and self.mouse_button_released:
-            if self.selected_ship_direction == 'H':
-                self.selected_ship_direction = 'V'
+            # kierunek stawiania
+            if self.selected_ship_orientation == 'H':
+                self.selected_ship_orientation = 'V'
             else:
-                self.selected_ship_direction = 'H'
-            if self.selected_ship_direction == 'V':
+                self.selected_ship_orientation = 'H'
+            # napis przycisku
+            if self.selected_ship_orientation == 'V':
                 self.orientation_button.text = 'Vertical'
             else:
                 self.orientation_button.text = 'Horizontal'
@@ -110,20 +120,31 @@ class Game:
             for row in range(self.rows):
                 for col in range(self.cols):
                     field = self.player_board.board[row][col]
-                    field.check_hover(mouse_pos)
                     if field.check_click(mouse_pos, mouse_button_down) and self.selected_ship not in self.placed_ships:
-                        if self.player_board.place_ship(row, col, self.selected_ship_size, self.selected_ship_direction, self.player_ships):
+                        if self.player_board.place_ship(row, col, self.selected_ship_size, self.selected_ship_orientation,
+                                                        self.player_ships):
                             self.disable_button(self.selected_ship)
                             self.placed_ships.add(self.selected_ship)
                             self.selected_ship = None
 
+        # wyłączanie podświetlenie statku
+        if not self.selected_ship:
+            for row in self.player_board.board:
+                for field in row:
+                    field.highlight_ship = False
+
         # rysowanie planszy gracza i przycisków
         self.player_board.draw(self.screen)
         for button in self.buttons:
+            # odpowiedzialne za trzymanie koloru jeżeli klikniemy w przycisk statku
+            if self.selected_ship == button.text:
+                button.current_color = (255, 0 , 0)
             button.draw(self.screen)
         self.orientation_button.draw(self.screen)
 
-        # zmiana stanu gry na 'GAME'
+        # podświetlanie pól, na które można postawić statek
+        self.player_board.check_hover(mouse_pos, self.selected_ship_size, self.selected_ship_orientation)
+
         # sprawdza czy ilość rozmieszczonych statków jest równa ilości statków w słowniku
         if len(self.placed_ships) == len(self.ships):
             self.game_state = "GAME"
@@ -131,7 +152,6 @@ class Game:
     def game_phase(self, mouse_pos, mouse_button_down):
         # ruch gracza
         if self.player_turn and mouse_button_down and self.mouse_button_released:
-            # sprawdzenie kliknięcia na planszę komputera
             field = self.computer_board.check_click(mouse_pos, mouse_button_down)
             if field and not field.hit and not field.miss:
                 field.hit = field.occupied
@@ -241,12 +261,11 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            self.screen.fill((200, 200, 200))
-
             # zmiany stanu gry
             if self.game_state == "MENU":
                 self.display_menu(self.menu_screen_buttons, "BATTLESHIPS", mouse_pos, mouse_button_down)
             elif self.game_state == "PLACEMENT":
+                self.screen.fill((200, 200, 200))
                 self.place_player_ships(mouse_pos, mouse_button_down)
             elif self.game_state == "GAME":
                 self.game_phase(mouse_pos, mouse_button_down)
